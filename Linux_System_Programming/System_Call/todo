@@ -1,0 +1,609 @@
+### ctags 설치
+
+> apt-get install ctags
+
+다음 실행
+
+linux-4.0.4/arch/x86 에 있는 내용을 tags에 정리한다
+
+> make ARCH=x86 tags
+
+### .vimrc 설정
+
+```
+set tags += /usr/include/tags
+set tags += /usr/src/linux-4.0.4/tags
+```
+
+test.txt 저장후 다음 절차 진행
+
+
+원하는 함수를 찾아서 다음 진행
+
+> task_struct
+
+'ctrl + ]' tags 파일에 task_struct 찾아감
+
+> #open file information 검색
+
+> files_struct ctrl + ]
+
+> file ctrl + ]
+
+> path ctrl + ]
+
+> tj : struct dentry
+
+> tj inode
+
+
+----------------
+
+에러 처리 - p13
+---------------
+
+###NAME 
+
+  - perror, strerror
+
+###SYNOPSIS
+
+```
+  #include <string.h>
+  char *strerror( int errnum );
+
+  #include <stdio.h>
+  void perror (const char *msg);
+```
+
+###RETURN VALUE
+
+  - Return: file descriptor if OK, - on error
+
+
+###Descriptin
+
+  - 유닉스 함수는 일반적으로 음수를 리턴하여 에러가 발생 했음을 알린다.
+  - 에러가 발생했을 때, 에러의 종류에 따라 전역 변수인 `errno` 에 특정값이 설정된다.
+  - <error.h>에 에러의 종류와 해당 값이 정의되어 있다.
+  - `strerror`
+    - `errnum`값에 해당하는 에러메시지를 리턴한다.
+  - `perror`
+    - 현재의 `errno` 값을 읽어 해당하는 에러 메시지를 `msg`와 함께 표준 출력(화면)에        표시한다. 
+
+`strerror(ENOENT)` 반환값인 `No such file or directory`을 출력한다.
+`perror(msg)`의 경우 `errno` `3`번인 `ESRCH` 반환 값인 `No such process`를 반환한다.
+
+### error.c
+
+```
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+
+// /usr/include/asm-generic/errno-base.h
+
+int
+main (int argc,
+	  char *argv[])
+{
+	char *err;
+	char msg[10] = "err test";
+
+//	err = strerror(EPERM);
+//	printf("err: %s\n", err);
+	err = strerror(ENOENT);
+	printf("err: %s\n", err);
+	errno = 3;
+	perror(msg);
+
+	return 0;
+}
+```
+
+Open 함수
+--------
+
+###NAME
+
+  - open : open or create a file or device
+
+###SYNOPSIS
+
+```
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+int open (const char *pathname, int oflag);
+int open (const char *pathname, int oflag, mode_t mode);
+```
+
+###RETURN VALUE
+
+  - Return: file descriptor if OK, - on error
+
+###Description
+
+  - oflag - open의 목적
+    - O_RDONLY : 읽기 전용
+	- O_WRONLY : 쓰기 전용
+	- O_RDWR   : 읽기, 쓰기 가능
+
+	- O_APPEND : 모든 쓰기 작업은 파일의 끝에서 수행된다.
+	- O_CREAT : 파일이 없을 경우 파일을 생성한다.
+	- O_EXCL : O_CREAT시 파일이 있는 경우에 error를 발생시킨다.
+	- O_TRUNC : 파일이 있는 경우에 기존 파일을 지운다.
+	- O_NONBLOCK : blockin I/O를 nonblocking 모드로 바꾼다.
+	- O_SYNC : 매 쓰기 연산마다 디스크 I/O가 발생하도록 설정한다.
+
+  - mode - 파일의 접근권한
+    - 새로운 파일 생성시에만 사용(O_CREAT)
+
+
+###open.c 
+
+```
+#include <stdio.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <asm-generic/errno-base.h>
+
+int
+main (int argc,
+	  char *argv[])
+{
+	char *fname = "test.txt";
+	int fd;
+
+	fd = open(fname, O_RDONLY);
+
+	if (fd > 0)
+	{
+		printf("Success\n FileName : %s, fd: %d\n", fname, fd);
+		close(fd);
+	}
+	else
+	{
+	    printf ("fd: %d\n", errno);
+		perror("open faild\n");
+	}
+
+	return 0;
+}
+```
+
+### 출력
+```
+Success
+ FileName : test.txt, fd: 3
+```
+
+creat function
+--------------
+
+###NAME
+
+  - creat : creat a file or device
+
+###SYNOPSIS
+
+```
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+int creat (const char *pathname, mode_t mode);
+```
+
+###RETURN VALUE
+
+  - Return: file descriptor if OK, -1 on error
+
+###DEscription
+
+  - pathname : 생성 화일 경로
+  - mode : 생성 파일의 허가모드
+    - umask 값과 연산하여 permission 설정
+  - default로 write only로 생성됨(Read 필요시 파일을 다시 Open해야함)
+  - open (pathname, O_WRONLY | O_CREAT | O_TRUNC, mode)와 동등
+  - 파일 생성시에는
+    - open(pathname, O_RDWR | O_CREAT | O_TRUNC, mode)가 효율적
+
+###creat.c
+
+```
+#include <fcntl.h>
+
+int
+main (int argc,
+		char *argv[])
+{
+	char *fname = "test.txt";
+	int fd;
+
+	fd = creat(fname, 0666);
+	if (fd < 0)
+		perror("creat()");
+	else
+	{
+		printf("Success!\n Filename:%s, fd:%d\n", fname, fd);
+		close(fd);
+	}
+
+	return 0;
+}
+
+```
+
+### 출력
+
+```
+Success
+ FileName : test.txt, fd: 3
+```
+
+lseek 함수
+----------
+
+###NAME
+
+  - lseek : reposition read/write file offset
+
+###SYNOPSIS
+
+```
+#include <sys/types.h>
+#include <unistd.h>
+off_t lseek(int fildes, off_t offset, int whence);
+```
+
+###RETURN VALUE
+
+  - Return: new file offset if OK, -1 on error
+
+###Description
+
+  - offset : 기준점에서의 상대적 거리
+  - whence : off 지정시의 기준점
+    - SEEK_SET
+	- SEEK_CUR
+	- SEEK_END
+	- 음수도 사용가(SEEK_CUR, SEEK_END)
+
+  - 파일의 Offset
+    - 파일의 처음에서 부터 byte 단위로 계산한 정수 값
+	- 기본적으로 파일이 처음 열리는 경우 offset의 위치는 0이다.
+	(O_APPEND 선택사항 사용시 예외)
+
+### lseek.c
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <asm-generic/errno-base.h>
+
+int
+main (int argc,
+		char *argv[])
+{
+	int fd;
+	char *fname = "test.txt";
+	off_t fsize;
+
+	if ( (fd = open (fname, O_RDONLY)) < 0 )
+	{
+		perror("open()");
+		exit(-1);
+	}
+
+	fsize = lseek(fd, 5, SEEK_SET);
+	printf("The size of 0 <%s> is %lu byts.\n", fname, fsize);
+
+
+	fsize = lseek(fd, 0, SEEK_CUR);
+	printf("The size of 5 <%s> is %lu byts.\n", fname, fsize);
+
+	fsize = lseek(fd, 10, SEEK_CUR);
+	printf("The size of 10 <%s> is %lu byts.\n", fname, fsize);
+
+	fsize = lseek(fd, -5, SEEK_END);
+	printf("The size of -10 <%s> is %lu byts.\n", fname, fsize);
+
+	exit(0);
+	return 0;
+}
+```
+
+### 출력
+
+```
+The size of 0 <test.txt> is 5 byts.
+The size of 5 <test.txt> is 5 byts.
+The size of 10 <test.txt> is 15 byts.
+The size of -10 <test.txt> is 18446744073709551615 byts.
+```
+
+read 함수
+--------
+
+### NAME
+
+  - read : read data from an open file
+
+### SYNOPSIS
+
+```
+#include <unistd.h>
+#ssize_t read (int fledes, void *buf, size_t nbytes);
+```
+
+### RETURN VALUE
+
+  - Return : number of bytes read, o if end of file, -1 on error
+
+### Description
+
+  - buffer : 파일로 부터 데이터를 읽어 들일 메모리 주소
+  - nbyte : 읽어 들일 데이터의 최대 byte 수
+  - Return 값의 체크에 따른 대응 필요(Return 값이 0 이면 EOF)
+
+
+###read.c
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <asm-generic/errno-base.h>
+
+int
+main (int argc,
+      char *argv[])
+{
+	int fd, linecnt = 0;
+	char c;
+
+	char *fname = "test.txt";
+
+	if((fd = open (fname, O_RDONLY)) < 0) {
+		perror("open()");
+		exit (-1);
+	}
+
+	for (;;) {
+		if (read(fd, &c, 1) > 0) {
+			if (c=='\n') linecnt++;
+		}
+		else {
+			break;
+		}
+	}
+
+	printf("Total line: %d\n", linecnt);
+	return 0;
+}
+```
+
+###출력
+
+```
+Total line: 5
+```
+
+write 함수
+---------
+
+###NAME
+
+  - write : write data from an open file
+
+###SYNOPSIS
+
+```
+#include <unistd.h>
+ssize_t write (int filedes, const void *buf, size_t nbytes);
+```
+###RETURN VALUE
+
+  - Return: number of bytes written if OK, -1 on error
+
+###Description
+
+  - buffer : 데이터가 들어있는 메모리 주소
+  - nbyte : 기록할 데이터의 byte 수
+  - Return 값과 nbyte 값은 같아야 한다.(다른 경우 에러)
+
+### read_2.c
+
+```
+/* Helo, UNIX! How are you? */
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <string.h>
+#include <unistd.h>
+
+int
+main (int argc,
+		char *argv[])
+{
+	char *fname = "test.txt";
+	int fd1, fd2, cnt;
+
+	char buf[30];
+
+	fd1 = open (fname, O_RDONLY);
+	fd2 = open (fname, O_RDONLY);
+
+	if (fd1 < 0 || fd2 < 0) {
+		perror("open()");
+		exit (-1);
+	}
+
+	cnt = read(fd1, buf, 12);
+	buf[cnt] = '\0';
+	printf("fd1's first printf: %s\n", buf);
+	lseek(fd1, 1, SEEK_CUR);
+
+	cnt = read(fd1, buf, 12);
+	buf[cnt] = '\0';
+	printf ("fd1's second printf: %s\n", buf);
+
+	cnt = read(fd2, buf, 12);
+	buf[cnt] = '\0';
+	printf("fd2's first printf: %s\n", buf);
+	lseek(fd2, 1, SEEK_CUR);
+
+	cnt = read(fd2, buf, 12);
+	buf[cnt] = '\0';
+	printf ("fd2's second printf: %s\n", buf);
+
+	return 0;
+}
+```
+
+```
+fd1's first printf: Hello, UNIX!
+fd1's second printf: How are you?
+fd2's first printf: Hello, UNIX!
+fd2's second printf: How are you?
+```
+
+###write_1.c
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int
+main (int argc,
+      char *argv[])
+{
+	int fd;
+	char c;
+
+	if ( (fd = open("test.txt", O_RDONLY)) < 0 )
+	{
+		perror("open");
+		exit(0);
+	}
+
+	for (;;)
+	{
+		if (read(fd, &c, 1) > 0)
+			putchar(c);
+		else
+			break;
+	}
+	return 0;
+}
+
+```
+
+###write_2.c
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int
+main (int argc,
+      char *argv[])
+{
+	int fd, linecnt = 0;
+	char c;
+	char *fname = "test.txt";
+
+	if ((fd = open(fname, O_RDONLY)) < 0) {
+		perror("open()");
+		exit(-1);
+	}
+
+	for (;;) {
+		if (read(fd, &c, 1) > 0) {
+			if (c == '\n')
+				linecnt++;
+		}
+		else
+			break;
+	}
+	printf("Total line: %d\n", linecnt);
+	exit(0);
+
+	return 0;
+}
+```
+
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
+NAME
+
+SYNOPSIS
+
+RETURN VALUE
