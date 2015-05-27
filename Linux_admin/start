@@ -1,0 +1,62 @@
+화면 크기설정
+장치 -> 게스트 확장 설치
+
+검색->terminal
+
+sudo passwod
+linux
+linux
+linux
+
+
+설치 모듈
+  - apt-get install vim (apt-get install tmux)
+  - apt-get install ssh
+
+ssh setting
+
+> $ cd /etc/ssh/ssh_config
+> PermitRoot~~ Yes # win~~~
+> #service ssh restart
+
+putty 설정
+
+> http://thdev.net/555
+
+> filezilla
+
+
+--------------
+
+# uname -r
+> 3.13.0-32-generic
+> # cd /usr/src/
+kernel.org
+4.0.4 버전 우클릭 바로가기 복사 후 프티에 붙여넣기
+> # wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.0.4.tar.xz
+다운로드후 xz 파일 압축 해제
+> http://blog.naver.com/chojun89/100185243292
+
+> # tar -xvf linux-4.0.4.tar.xz
+> # cd linux-4.0.4
+> # apt-get intall build-esential
+> # make menuconfig
+> # apt-get install libncurses5-dev
+> # make menuconfig
+  Load 가서
+  /boot/config-3.16.0-37-generic
+  저장 (.config)
+> # make-kpkg --initrd --revision=1.0 kernel-image
+(시간 엄청 걸림)
+> # cd ../
+> # dpkg -i linux-image-4.0.4_1.0_amd64.deb
+> # uname -r
+3.16.0-37-generic
+> # reboot
+> uname -r
+> 4.0.4
+
+최적화 시킨다는데
+(
+
+모양
