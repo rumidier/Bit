@@ -44,7 +44,7 @@ time_t mktime(struct tm *timeptr);
 double difftime(time_t time1, time_t time0);
 ```
 
-cunt_days.c Code
+### cunt_days.c Code
 
 `difftime()`을 사용하기 위해서는 비교할 `time_t` 구조의 `time0`, `time1`이 필요합니다.
 `difftime()`의 반환값으로 `sec` 단위의 `double`형 값을 반환하기 때문에 이값을 출력전에
@@ -131,7 +131,7 @@ SYNOPSIS
   time_t mktime(struct tm *timeptr);
 ```
 
-add_100.c Code
+### add_100.c Code
 
 `struct tm user_time` 선언후 입력 받는 년, 월, 일 저장합니다.
 저장된 `tm_mday`에 `100`을 더한후 `mktime()` 사용시 추가된 `100`일만큼 년, 월, 일이
@@ -220,7 +220,7 @@ struct tm * localtime(const time_t *clock);
 time_t mktime(struct tm *timeptr);
 ```
 
-select_day.c Code
+### select_day.c Code
 
 `time`과 `localtime` 을 사용해서 현재 년도에 해당하는 `struct tm *local_time`을 만듭니다.
 입력받는 일수를 `local_time->tm_mday += input_day` 이후 `mktime`를 사용해서 입력받은
@@ -284,7 +284,7 @@ size_t strlen(const char *s);
 ```
 
 
-reverse_change.c Code
+### reverse_change.c Code
 
 43번과 44번 문제의 차이점을 모르겠습니다.
 문장(스트링)을 입력받아 거꾸로(내용을 뒤집어) 출력하는 것의 차이점이
@@ -396,7 +396,7 @@ int fgetc(FILE *stream);
 int fclose(FILE *stream);
 ```
 
-count.c Code
+### count.c Code
 
 겨울 왕국 대본인 `winter.txt`를 `fopen`으로 연후 `fgetc`으로 한글자씩 비교하며
 총문자수, 대소문자, 모음의 개수, 알파벳의 빈도수를 세아렸습니다.
