@@ -1,0 +1,497 @@
+## 40
+
+시작 년월일, 종료 년월일을 입력받아 날짜 수를 세는 프로그램을 작성하시오.
+
+실행 예>
+
+```
+$ make
+$ ./count_days
+start year: 1999
+start month: 3
+start day: 6
+end year: 2003
+end day: 6
+
+1999/3/6~2003/5/6: 1522day(s)
+```
+
+NAME
+
+- count_days
+
+SYNOPSIS
+
+- memset
+
+```
+#include <string.h>
+
+void * memset(void *b, int c, size_t len);
+```
+
+- mktime
+
+```
+#include <time.h>
+time_t mktime(struct tm *timeptr);
+```
+
+- difftime
+
+```
+#include <time.h>
+double difftime(time_t time1, time_t time0);
+```
+
+cunt_days.c Code
+
+`difftime()`을 사용하기 위해서는 비교할 `time_t` 구조의 `time0`, `time1`이 필요합니다.
+`difftime()`의 반환값으로 `sec` 단위의 `double`형 값을 반환하기 때문에 이값을 출력전에
+`diff_day` 변수에 `sec`->`day` 단위로 변환후 출력값으로 전달했습니다.
+
+```
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+int
+main(int argc,
+     char *argv[])
+{
+   int start_year, start_mon, start_day;
+   int end_year, end_mon, end_day;
+   int diff_day;
+   double diff_sec;
+   struct tm user_time;
+   time_t start_time;
+   time_t end_time;
+
+   memset(&user_time, 0, sizeof(user_time));
+   printf("start year: ");
+   scanf("%d", &start_year);
+   printf("start month: ");
+   scanf("%d", &start_mon);
+   printf("start day: ");
+   scanf("%d", &start_day);
+   user_time.tm_year   = start_year - 1900;
+   user_time.tm_mon    = start_mon - 1;
+   user_time.tm_mday   = start_day;
+
+   start_time   = mktime( &user_time);
+
+   memset(&user_time, 0, sizeof(user_time));
+   printf("end year: ");
+   scanf("%d", &end_year);
+   printf("end mon: ");
+   scanf("%d", &end_mon);
+   printf("end day: ");
+   scanf("%d", &end_day);
+   user_time.tm_year   = end_year - 1900;
+   user_time.tm_mon    = end_mon - 1;
+   user_time.tm_mday   = end_day;
+
+   end_time   = mktime( &user_time);
+
+   diff_sec = difftime(end_time, start_time);
+   diff_day = diff_sec / (60 * 60 * 24);
+
+   printf("%4d/%2d/%2d ~ %4d/%2d/%2d: %d day(s)\n", start_year, start_mon, start_day, end_year, end_mon, end_day, diff_day);
+
+   return 0;
+}
+
+```
+
+## 41
+
+년월일을 입력받아 그 날짜에 100일 지난 년, 월, 일을 출력하는 프로그램을 작성하시오.
+
+실행예>
+
+```
+$ make
+$ ./add_100
+year : 1999
+month : 12
+day : 10
+1999/12/10 + 100 = 2000/3/19
+```
+
+NAME
+
+- add_100
+
+SYNOPSIS
+
+- mktime
+
+```
+  #include <time.h>
+  time_t mktime(struct tm *timeptr);
+```
+
+add_100.c Code
+
+`struct tm user_time` 선언후 입력 받는 년, 월, 일 저장합니다.
+저장된 `tm_mday`에 `100`을 더한후 `mktime()` 사용시 추가된 `100`일만큼 년, 월, 일이
+자동 계산 됩니다.
+
+```
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+int
+main(int argc,
+     char *argv[])
+{
+   int input_year, input_mon, input_day;
+   struct tm user_time;
+
+   memset(&user_time, 0, sizeof(user_time));
+
+   printf("year: ");
+   scanf("%d", &input_year);
+   printf("month: ");
+   scanf("%d", &input_mon);
+   printf("start day: ");
+   scanf("%d", &input_day);
+
+   user_time.tm_year   = input_year - 1900;
+   user_time.tm_mon    = input_mon - 1;
+   user_time.tm_mday   = input_day;
+
+   user_time.tm_mday += 100;
+   mktime(&user_time);
+
+   printf("%4d/%2d/%2d + 100 = %4d/%2d/%2d\n",
+          input_year,
+          input_mon,
+          input_day, 
+          user_time.tm_year + 1900,
+          user_time.tm_mon + 1,
+          user_time.tm_mday
+          );
+
+   return 0;
+}
+```
+
+## 42
+
+일수를 입력받아 1월 1일 이후에서의 해당하는 날짜를 출력하는 프로그램을 작성하시오.
+
+실행예>
+
+```
+$ make
+$ select_day
+day : 100
+1/1 + 100 : 4/10
+day : 1
+1/1 + 1 : 1/2
+```
+
+NAME
+
+- select_day
+
+SYNOPSIS
+
+- time
+
+```
+#include <time.h>
+char * time(time_t *t);
+```
+
+- localtime
+
+```
+#include <time.h>
+struct tm * localtime(const time_t *clock);
+```
+
+- mktime
+
+```
+#include <time.h>
+time_t mktime(struct tm *timeptr);
+```
+
+select_day.c Code
+
+`time`과 `localtime` 을 사용해서 현재 년도에 해당하는 `struct tm *local_time`을 만듭니다.
+입력받는 일수를 `local_time->tm_mday += input_day` 이후 `mktime`를 사용해서 입력받은
+날짜만큼 현재년도 `1/1` 추가된 일자를 출력하도록 했습니다.
+
+```
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+int
+main (int argc,
+      char *argv[])
+{
+  int input_day;
+
+  time_t current_time;
+  time(&current_time);
+
+  struct tm *local_time;
+  local_time =  localtime(&current_time);
+  local_time->tm_year += 1900;
+  local_time->tm_mon   = 0;
+  local_time->tm_mday  = 1;
+  local_time->tm_hour  = 0;
+  local_time->tm_min   = 0;
+  local_time->tm_sec   = 0;
+  
+  printf("day: ");
+  scanf("%d", &input_day);
+  local_time->tm_mday += input_day;
+  mktime(local_time);
+
+  printf("1/1 + %d: %2d/%2d\n", input_day, local_time->tm_mon + 1, local_time->tm_mday);
+
+  return 0;
+}
+```
+
+## 43
+
+문장을 입력 받아 거꾸로 출력하는 reverse() 함수를 작성하시오.
+
+실행 예>
+
+```
+input string : hello
+<reverse>
+o l l e h
+```
+
+NAME
+
+- reverse_change
+
+SYNOPSIS
+
+```
+#include <string.h>
+size_t strlen(const char *s);
+```
+
+
+reverse_change.c Code
+
+43번과 44번 문제의 차이점을 모르겠습니다.
+문장(스트링)을 입력받아 거꾸로(내용을 뒤집어) 출력하는 것의 차이점이
+무엇인지 몰라서 하나만 작성했습니다.
+
+문장을 입력받아 `reverse_change()`에 문자열 주소를 전달하고 문장의 길이를 `strlen()`으로 구한후
+뒤에서 부터 출력하도록 했습니다.
+
+```
+#include <stdio.h>
+#include <string.h>
+
+#define BUF_SIZE 1023
+
+void
+reverse_change (char *str)
+{
+  int i;
+  int str_len = strlen(str);
+
+  puts("<after reverse..>");
+  printf("Output string: ");
+
+  for (i=(str_len - 1); i>=0; i--) {
+    //printf("[%c]", str[i]); //DEBUG
+    printf("%c", str[i]);
+  }
+  puts("");
+
+}
+
+int
+main (int argc,
+      char *argv[])
+{
+  char buf[BUF_SIZE];
+  printf("input string: ");
+  scanf("%s", buf);
+
+  reverse_change(buf);
+
+  return 0;
+}
+```
+
+## 45
+
+한 문장을 입력받아 정해진 step만큼 소스를 바꾸는 프로그램을 작성하시오.
+
+정해진 `step`이 무엇을 의미하는지 파악 못해서 작성하지 못했습니다.
+(문자를 ENCODER 시키는건데 어떤 형식인지 모릅니다.)
+
+실행 예 >
+
+```
+Input step : 2
+Input string : I LOVE YOU
+SOURCE STRING : I LOVE YOU
+ENCODER STRING : K NQXG AQW
+DECODER STRING : I LOVE YOU
+```
+
+## 46
+
+파일에서 총 문자수, 대문자, 소문자, 모음의 개수, 알파벳의 빈도수를 세는 프로그램을 작성하시오.
+
+실행 예>
+
+```
+total = 1189
+big = 14
+small = 890
+vowel = 342
+A : 64  B : 23  C : 9   D : 37  E : 132
+F : 18  G : 14  H : 49  I : 69  J : 0
+K : 2   L : 45  M : 15  N : 58  O : 63
+P : 24  Q : 1   R : 49  S : 72  T : 105
+U : 14  V : 8   W : 21  X : 0   Y : 10
+Z : 2 
+```
+
+NAME
+
+- count
+
+SYNOPSIS
+
+- fopen
+
+```
+#include <stdio.h>
+
+FILE * fopen(const char *restrict filename, const char *restrict mode);
+```
+
+- fgetc
+
+```
+#include <stdio.h>
+
+int fgetc(FILE *stream);
+```
+
+- fclose
+
+```
+#include <stdio.h>
+
+int fclose(FILE *stream);
+```
+
+count.c Code
+
+겨울 왕국 대본인 `winter.txt`를 `fopen`으로 연후 `fgetc`으로 한글자씩 비교하며
+총문자수, 대소문자, 모음의 개수, 알파벳의 빈도수를 세아렸습니다.
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct _dic {
+  int total;
+  int big;
+  int small;
+  int vowel;
+  int etc;
+  int count[26];
+} Dic;
+
+int
+main (int argc,
+      char *argv[])
+{
+
+  FILE *fp;
+  int i;
+  char ch;
+  Dic data;
+
+  for (i = 0; i <= 25; i++)
+    {
+      data.count[i] = 0;
+    }
+
+  if ((fp = fopen ("./winter.txt", "r")))
+    {
+      while(EOF != (ch = fgetc(fp)))
+        if ('a' <= ch && ch <= 'z')
+          {
+            if ('a' == ch || 'e' == ch || 'i' == ch || 'o' == ch || 'u' == ch)
+              data.vowel++;
+
+            if (97 <= ch && ch <= 122)
+              data.count[ch - 97]++;
+
+            data.total++;
+            data.small++;
+          }
+        else if ('A' <= ch && ch <= 'Z') {
+            if ('A' == ch || 'E' == ch || 'I' == ch || 'O' == ch || 'U' == ch)
+              data.vowel++;
+
+            if (65 <= ch && ch <= 90)
+              data.count[ch - 65]++;
+
+            data.total++;
+            data.big++;
+        }
+        else if ('0' <= ch && ch <= '9') {
+            data.total++;
+            data.small++;
+        }
+        else {
+          data.total++;
+          data.etc++;
+        }
+    }
+  else {
+    printf("Open error\n");
+    exit(-1);
+  }
+
+  printf("total = %d\n", data.total);
+  printf("big   = %d\n", data.big);
+  printf("small = %d\n", data.small);
+  printf("vowel = %d\n", data.vowel);
+  printf("etc   = %d\n", data.etc);
+
+  int count = 0;
+
+  for (i=0; i<=25; i++) {
+    if (0 <= i && i <= 24) {
+      printf("%c: %5d ",(65 + i), data.count[i]);
+    }
+    else {
+      printf("%c: %5d\n",(65 + i), data.count[i]);
+    }
+
+    if (count == 4) {
+      printf("\n");
+      count = 0;
+    }
+    else count++;
+  }
+  printf("\n");
+  fclose(fp);
+
+  return 0;
+}
+```
