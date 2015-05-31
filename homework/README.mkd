@@ -16,13 +16,13 @@ end day: 6
 1999/3/6~2003/5/6: 1522day(s)
 ```
 
-NAME
+### NAME
 
-- count_days
+#### count_days
 
-SYNOPSIS
+### SYNOPSIS
 
-- memset
+#### memset
 
 ```
 #include <string.h>
@@ -30,14 +30,14 @@ SYNOPSIS
 void * memset(void *b, int c, size_t len);
 ```
 
-- mktime
+#### mktime
 
 ```
 #include <time.h>
 time_t mktime(struct tm *timeptr);
 ```
 
-- difftime
+#### difftime
 
 ```
 #include <time.h>
@@ -118,13 +118,13 @@ day : 10
 1999/12/10 + 100 = 2000/3/19
 ```
 
-NAME
+### NAME
 
-- add_100
+#### add_100
 
-SYNOPSIS
+### SYNOPSIS
 
-- mktime
+#### mktime
 
 ```
   #include <time.h>
@@ -193,27 +193,27 @@ day : 1
 1/1 + 1 : 1/2
 ```
 
-NAME
+### NAME
 
-- select_day
+#### select_day
 
-SYNOPSIS
+### SYNOPSIS
 
-- time
+#### time
 
 ```
 #include <time.h>
 char * time(time_t *t);
 ```
 
-- localtime
+#### localtime
 
 ```
 #include <time.h>
 struct tm * localtime(const time_t *clock);
 ```
 
-- mktime
+#### mktime
 
 ```
 #include <time.h>
@@ -272,11 +272,13 @@ input string : hello
 o l l e h
 ```
 
-NAME
+### NAME
 
-- reverse_change
+#### reverse_change
 
-SYNOPSIS
+### SYNOPSIS
+
+#### strlen
 
 ```
 #include <string.h>
@@ -366,13 +368,13 @@ U : 14  V : 8   W : 21  X : 0   Y : 10
 Z : 2 
 ```
 
-NAME
+### NAME
 
-- count
+#### count
 
-SYNOPSIS
+### SYNOPSIS
 
-- fopen
+#### fopen
 
 ```
 #include <stdio.h>
@@ -380,7 +382,7 @@ SYNOPSIS
 FILE * fopen(const char *restrict filename, const char *restrict mode);
 ```
 
-- fgetc
+#### fgetc
 
 ```
 #include <stdio.h>
@@ -388,7 +390,7 @@ FILE * fopen(const char *restrict filename, const char *restrict mode);
 int fgetc(FILE *stream);
 ```
 
-- fclose
+#### fclose
 
 ```
 #include <stdio.h>
