@@ -1,0 +1,101 @@
+1. github.com 접속
+  - 계정 생성(sign up)
+  - finish sign up
+
+2. git 설치
+  - apt-get intsll git
+
+3. github.com 웹 홈에서 화면 중간 3시 방향 '+New repository'
+
+  Repository name
+   - Bit
+  Description
+  Createing repository
+
+4. linux 작업 폴더로 이동
+웹에서 출력한 출력 따라하기
+(작성된 파일이 있다면 READEME 건너뛰어도됨)
+새로운 파일일경우 웹에서 출력된 내용물 따라하면됨
+
+기존에 파일이 있는 경우
+
+> git init
+Initiallized empty Git repository in /root/Bit/.git
+> git add .
+> git status
+
+
+메세지 작업을 수월하게 하기위한 vim 셋팅
+git config --global core.editor "vim"
+
+git 개인 설정 하기
+
+git config --global user.email "등록한 이메일"
+git config --global user.name "등록한 자기이름"
+
+설정한 내역은 (.git/config 에서 확인및 수정 가능합니다.)
+
+> git commit -v .
+
+열리는 vim 모드 창에서
+첫번째줄은 제목
+2번째줄 공백
+3번째줄 commit 메세지 설명
+메세지 작성후 저장하고 나옴
+
+> git remote add origin https://github.com/등록한 자기이름/Bit.git
+> git push -u origin master
+
+username for 'http~~~~~~': 등록한 이름
+
+비밀번호 for 'http~~~': git 계정 생성시 비밀번호
+
+이상없이 업로드가 진행되면
+블라블라브라~~~~
+Branch master set up to track remote branch master from origin.
+
+오류가 없을시 웹에서 업로드된 파일을 확인 가능
+(https://github.com/등록한 이름/Bit)
+
+5. 키등록
+
+리눅스에서
+> ssh-keygen
+> 끝날때까지 엔터
+> cat ~/.ssh/id_rsa.pub
+> 키값복사 (ssh~~~~~~~VirtualBox)
+> 웹 접속 github.com/settings/ssh
+> 1시방향 'Add SSH key' 
+> 키에대한 제목 작성후
+> Key 복사한 키 붙여넣기
+> Add key
+
+6. 저장소 경로지정하기
+
+git config --global push.default matching
+git remote set-url origin git@github.com:자기이름/Bit.git
+
+git push
+(yes/no) yes 입력
+
+
+7. 사용방법
+
+
+- 작업 진행
+- git status
+- 붉은색 글씨는 'not staged' 새로 파일이 생성되었거나 수정되었을시 확인합니다.
+- git add <수정된 파일>
+- git status
+- 녹색은 스테이징된 상태를 뜻하고 `commit` 메세지를 작성할 수 있는 상태로 변환됩니다.
+- git commit -v (-v 옵션은 변한 코드 정보를 같이 표시하는 옵션입니다.) 
+  커밋 메세지 작성창은 vim 모드와 동일하며
+  첫번째 줄은 commit 메세지의 제목을
+  두번째는 뛰우며
+  세번째 줄은 메세지에 대한 설명을 작성합니다.(설명 안해도 되지만 안하면 나중에 확인이 어렵습니다.)
+- git pull (pull 변경된 이력이 있는지 확인을 위해 실행합니다.)
+  git pull 시 문제가 없다면 다음 진행
+- git push
+ 
+조한영 주소
+  git clone https://github.com/rumidier/Bit.git
