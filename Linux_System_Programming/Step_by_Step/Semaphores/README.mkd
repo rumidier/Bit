@@ -1,0 +1,4 @@
+Semaphores (start 339p)
+semget
+semop
+semctl

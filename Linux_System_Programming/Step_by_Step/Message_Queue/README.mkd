@@ -1,0 +1,5 @@
+Message Queue (start 311p)
+msgget
+msgsnd
+msgrcv
+msgctl
