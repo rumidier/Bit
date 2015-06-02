@@ -1,0 +1,221 @@
+# Shared Memory (start 352p)
+
+### NAME
+
+##### shmget - allocates a shared memory segment
+
+[shmget 참고자료](http://forum.falinux.com/zbxe/index.php?document_srl=423456&mid=C_LIB)
+
+### SYNOPSIS
+
+```
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+
+int shmget(key_t key, int size, int flag);
+int shmget(key_t key, int size, int shmflg);
+key_t key      : 공유 메모리를 구별하는 식별 번호
+int size       : 공유 메모리 크기
+int shmflg     : 동작 옵션 
+  - IPC_CREATE : key에 해당하는 공유 메모리가 없다면 새로 생성한다. 만약있다면 무시하며 생성을 위해 접근 권한을 지정해 주어야 한다. 
+  - IPC_EXCL   : 공유 메모리가 이미 있다면 실패로 반환하며 공유 메모리에 접근하지 못한다. 이 옵션이 없어야 기존 공유 메모리에 접근할 수 있다.
+```
+
+### RETRUN VALUE
+
+##### Return : shared memory ID if OK, -1 on error
+
+공유 메모리의 생성과 연결 코드는 `counter.c`, `show_counter.c` 두개의 파일에 모두 있어야 하며
+두개중에 어느 하나가 `shmget` 함수로 공유 메모리가 없는 경우에 생성하게 되며 생성후 공유 메모리를 첨부하게 됩니다.
+
+공유 메모리는 `counter.c` `show_counter.c`  두개의 프로세스가 동시에 바라볼 수 있도록 같은(고유한) `KEY_NUM` 값을 알아야 합니다.
+
+```
+if ( -1 == ( shm_id = shmget( (key_t)KEY_NUM, MEM_SIZE, IPC_CREAT | 0666 ) ) )
+  {
+    printf( "공유 메모리 생성 실패\n");
+    return -1;
+  }
+```
+
+### shmget Code
+
+[counter.c](https://gist.github.com/rumidier/d3df77bcfeca2a663bb9)
+
+```
+vi Bit/Linux_System_Programming/Step_by_Step/Shared_Memory/shmget/counter.c
+```
+
+[show_shmget.c](https://gist.github.com/rumidier/9a2808392971bc9590b1)
+
+```
+vi Bit/Linux_System_Programming/Step_by_Step/Shared_Memory/shmget/show_shmget.c
+```
+
+### NAME
+
+###### shmat
+
+[shmat 참고자료](http://forum.falinux.com/zbxe/index.php?document_srl=426100&mid=C_LIB)
+
+### SYNOPSIS
+
+```
+#include <sys/type.h>
+#include <sys/shm.h>
+void *shmat(int shmid, const void *shmaddr, int shmflg); 
+
+int shmid     : 공유 메모리를 구별하는 식별 번호
+void *shmaddr : 첨부되는 어드레스 주소. 일반적으로 NULL을 지정
+int shmflg : 동작 옵션
+  - SHM_RDONLY  : 공유 메모리를 읽기 전용으로
+  - SHM_RND     : shmaddr이 NULL이 아닌 경우일 때만 사용되며, shmaddr을 반올림하여 메모리 페이지 경계에 맞춘다. 
+  - (void *) -1 : 실패 이외 프로세스에 첨부된 프로세스에서의 공유 메모리 주소 
+```
+
+공유 메모리의 생성과 연결 코드는 `counter.c`, `show_counter.c` 두개의 파일에 모두 있어야 하며
+두개중에 어느 하나가 `shmget` 함수로 공유 메모리가 없는 경우에 생성하게 되며 생성후 공유 메모리를 첨부하게 됩니다.
+
+`counter.c`의 경우는 공유된 메모리에 쓰기 작업을 하며 `show_counter.c`에서는 공유된 메모리의 정보만을 읽어서 출력합니다.
+
+```
+if ( -1 == ( shm_id = shmget( (key_t)KEY_NUM, MEM_SIZE, IPC_CREAT | 0666 ) ) )
+  {
+    printf( "공유 메모리 생성 실패\n");
+    return -1;
+  }
+
+if ( (void *) - 1 == ( shm_addr = shmat(shm_id, (void *)0, 0) ) )
+  {
+    printf("공유 메모리 첨부 실패\n");
+    return -1;
+  }
+```
+### shmat Code
+
+[counter.c](https://gist.github.com/rumidier/d3df77bcfeca2a663bb9)
+
+```
+vi Bit/Linux_System_Programming/Step_by_Step/Shared_Memory/shmat/counter.c
+```
+
+[show_shmat.c](https://gist.github.com/rumidier/7fdfa20e969ea5f58cd2)
+
+```
+vi Bit/Linux_System_Programming/Step_by_Step/Shared_Memory/shmat/show_shmat.c
+```
+
+### NAME
+
+##### shmdt
+
+[shmdt 참고자료](http://forum.falinux.com/zbxe/index.php?document_srl=426102&mid=C_LIB)
+
+### SYNOPSIS
+
+```
+#include <sys/type.h>
+#include <sys/shm.h>
+int shmdt(const void *shmaddr);
+
+- void *shmaddr : 분리할 공유 메모리 주소
+- -1 실패 0 공유 메모리 분리 성공
+```
+
+`shmdt(address)` 성공시 `0`을 반환하기 때문에 `-1` 이면 분리가 되지 않음을 뜻합니다.
+
+`show_counter` 에서 메모리 분리시 메모리 주소에 접근을 분리를 의미하며 메모리와 `counter`에 영향을 끼치지 않습니다.
+
+```
+ if ( -1 == shmdt(shm_addr))
+```
+### shmdt Code
+
+[counter.c](https://gist.github.com/rumidier/d3df77bcfeca2a663bb9)
+
+```
+vi Bit/Linux_System_Programming/Step_by_Step/Shared_Memory/shmdt/counter.c
+```
+
+[show_shmdt.c](https://gist.github.com/rumidier/7fdfa20e969ea5f58cd2)
+
+```
+vi Bit/Linux_System_Programming/Step_by_Step/Shared_Memory/shmdt/show_shmdt.c
+```
+
+### NAME
+
+##### shmctl
+
+[shmctl 참고자료](http://forum.falinux.com/zbxe/index.php?document_srl=426104&mid=C_LIB)
+
+### SYNOPSIS
+
+```
+#include <sys/ipc.h>
+#include <sys/shm.h>
+int shmctl(int shmid, int cmd, struct shmid_ds *buf);
+int shmid 	공유 메모리 식별 번호
+int cmd 	제어 명령
+
+-1 실패
+0 성공
+```
+
+```
+struct shmid_ds *buf 	공유 메모리 정보 구하기 위한 버퍼 포인터 
+struct shmid_ds {
+  struct    ipc_perm shm_perm;/* 접근권한 */
+  int  shm_segsz;            /* 세그먼트의 크기(bytes) */
+  time_t    shm_atime;       /* 마지막 접근 시간 */
+  time_t    shm_dtime;       /* 마지막 제거 시간 */
+  time_t    shm_ctime;       /* 마지막 변경 시간 */
+  unsigned short shm_cpid; /* 생성자의 프로세스의 프로세스 id */
+  unsigned short shm_lpid; /* 마지막으로 작동한 프로세스의 프로세스 pid */
+  short     shm_nattch;     /* 현재 접근한 프로세스의 수 */
+  /* 다음은 개별적이다 */
+  unsigned short   shm_npages; /* 세그먼트의 크기(pages) */
+  unsigned long   *shm_pages;
+  struct shm_desc *attaches;    /* 접근을 위한 기술자들 */
+  };
+
+shm_perm 멤버의 필드들은 아래와 같이 설정할 수 있습니다.
+struct ipc_perm{
+       key_t  key;
+       ushort uid;   /* owner의 euid 와 egid */
+       ushort gid;
+       ushort cuid;  /* 생성자의 euid 와 egid */
+       ushort cgid;
+       ushort mode;  /* 접근 모드의 하위 9 bits */
+       ushort seq;   /* 연속 수(sequence number) */
+     };
+```
+
+int cmd
+
+```
+IPC_STAT : 메시지 큐의 현재 상태를 buf에 저장합니다.
+IPC_SET  : 메시지 큐의 상태를 buf 값으로 변경합니다. 그러나 모든 정보는 안되고 msg_perm과 msg_qbytes 내용만 변경할 수 있습니다.
+IPC_RMID : 메시지 큐를 삭제합니다. 이럴 때에는 buf가 필요 없으므로 buf 를 0 으로 지정합니다. 
+```
+
+메모리 제거 할당된 메모리를 제거함으로써 `counter` 쓰기와 `show_counter` 읽기 프로세스를 모두 종료시킵니다.
+
+```
+if ( -1 == shmctl(shm_id, IPC_RMID, 0) )
+```
+
+### shmctl Code
+
+[counter.c](https://gist.github.com/rumidier/d3df77bcfeca2a663bb9)
+
+```
+vi Bit/Linux_System_Programming/Step_by_Step/Shared_Memory/shmctl/counter.c
+```
+
+[show_shmctl.c](https://gist.github.com/rumidier/e29388030a3ab5d2a7a7)
+
+```
+vi Bit/Linux_System_Programming/Step_by_Step/Shared_Memory/shmctl/show_shmctl.c
+```

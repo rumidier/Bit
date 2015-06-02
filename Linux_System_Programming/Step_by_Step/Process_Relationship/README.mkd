@@ -1,0 +1,7 @@
+# Process Relationship (start 238p)
+
+getpgrp
+setpgid
+setsid
+tcgetpgrp
+tcsetpgrp
