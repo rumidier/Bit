@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include <string.h>
 #include <unistd.h>
+#include <string.h>
 #include <stdlib.h>
+#include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 
 int
@@ -12,8 +12,9 @@ main (int argc,
       char *argv[],
       char **envp)
 {
-  int sck_inet, len_inet;
-  struct sockaddr_in adr_inet;
+  int sck_inet, new_fd;
+  struct sockaddr_in adr_inet, their_addr;
+  int len_inet, sin_size;
 
   sck_inet = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -35,6 +36,8 @@ main (int argc,
       printf("bind error\n");
       exit(0);
     }
+  sin_size = sizeof(struct sockaddr_in);
+  new_fd = accept(sck_inet, (struct sockaddr *)&their_addr, (socklen_t *)&sin_size);
 
   system("netstat -pa --tcp");
   close(sck_inet);
