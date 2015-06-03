@@ -22,6 +22,7 @@ main (int argc,
       }
     }
   printf("\n");
+
   bcopy(str2, str1, 5);
   printf("str1: %s\n", str1);
 
