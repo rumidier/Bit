@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #define PORT 50000
 #define MAXDATASIZE 100
@@ -40,6 +41,7 @@ main (int argc,
   their_addr.sin_port = htons(PORT);
   their_addr.sin_addr = *((struct in_addr *) he->h_addr);
   bzero(&(their_addr.sin_zero), 8);
+
   if (connect (sockfd, (struct sockaddr *)&their_addr, sizeof(struct sockaddr)) == -1) {
     perror("connect");
     exit(1);

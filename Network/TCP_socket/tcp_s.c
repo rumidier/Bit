@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define MYPORT 5000
+#define MYPORT 50000
 #define BACKLOG 10
 #define MAXSIZE 100
 
