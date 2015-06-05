@@ -1,0 +1,55 @@
+### NAME
+##### socket
+### SYNOPSIS
+```
+#include <sys/socket.h>
+int socket(int family, int type int protocol);
+```
+### RETURN VALIE
+
+##### nonnegative descriptor if OK, -1 on error
+
+Protocol Family
+
+AF_INET : Internet(IPv4) protocol
+AF_INET6: IPv6 protocol
+AF_LOCAL: Unix domain protocol
+AF_ROUTE: Routing sockets
+AF_KEY: IPv6 Key socket
+
+
+Socket Type
+
+SOCK_STREAM : Stream socket
+  - 스트림 방식의 소켓 생성
+  - UNIX의 파이프 개념과 동일
+  - 연결형(스트림) 서비스 선택 시 사용
+  - 메시지 경계가 유지되지 않음
+  - 전달된 순서대로 수신됨
+  - 전송된 모든 데이터는 에러없이 원격지에 도달
+
+SOCK_DGRAM : Dataram socket
+  - 데이터그램 방식의 소켓 생성
+  - 개별적으로 주소가 쓰여진 패킷 전송 시 사용
+  - 비연결형(데이터그램) 서비스 선택 시 사용
+  - 패킷은 전달된 순서대로 수신되지 않음
+  - 에러복구를 하지 않음(즉, 신뢰성이 없음)
+  - 데이터그램 패킷의 크기 제한
+
+SOCK_RAW: Raw socket
+  - RAW 모드의 소켓 생성
+  - 직업 IP 계층을 이용
+
+### NAME
+##### bind
+### SYNOPSIS
+```
+#include <sys/socket.h>
+int bind(int sockfd, const struct sockaddr *myaddr, socklen_t addrlen);
+
+### RETURN VALUE
+### return: o if OK, -1 on error
+```
+
+### NAME
+##### getsockname
