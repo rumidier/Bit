@@ -22,7 +22,7 @@ main (int argc,
       FD_SET(0, &readfds);
       FD_SET(fd, &readfds);
 
-      select (fd + 1, &readfds, 0, 0, 0);
+      select (fd+1, &readfds, 0, 0, 0);
 
       if(FD_ISSET(0, &readfds))
         {

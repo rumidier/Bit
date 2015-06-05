@@ -24,6 +24,17 @@ main (int argc,
   unsigned int fromSize;
   char *servIP;
   char *echoString;
-  char 
+  char echoBuffer[ECHOMAX + 1];
+  int echoStringLen;
+  int respStringLen;
+
+  if (argc != 4)
+  {
+	  fprintf(stderr, "Usage: %s <Server IP> <Echo Word> [<Echo Port>]\n", argv[0]);
+	  exit(1);
+  }
+  servIP       = argv[1];
+  echoString   = argv[2];
+  echoServPort = atoi(argv[3]);
 
 }
