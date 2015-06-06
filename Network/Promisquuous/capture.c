@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
+#include <unistd.h>
 
 #define MTU 1500
 
@@ -24,14 +25,16 @@ main (int argc,
   int n;
   int i;
 
-  sock = socket (AN_INET, SOCK_RAW, AF_PACKET);
+  sock = socket (AF_INET, SOCK_RAW, AF_PACKET);
 
-  strncpy (etherq.ifr_name, "eth0", IFNAMSIZ);
+  strncpy (ethreq.ifr_name, "eth0", IFNAMSIZ);
   ioctl(sock, SIOCGIFFLAGS, &ethreq);
+  ethreq.ifr_flags |= IFF_PROMISC;
+  ioctl(sock, SIOCSIFFLAGS, &ethreq);
 
   while (1)
     {
-      n = recv(sock, packet, sizeof(apcket), 0);
+      n = recv(sock, packet, sizeof(packet), 0);
       printf("------------------------------\n");
       printf("n[%d]\n", n);
       for (i=0; i<n; i++) {
