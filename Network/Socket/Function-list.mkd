@@ -1,3 +1,4 @@
+start ~ 123p
 ### bzero, bcopy, bcmp
 
 ```
