@@ -18,12 +18,16 @@ struct sigaction *oldact 	이전 행동, 이 함수를 호출하기 전에 지�
 반환: 0	성공 -1 실패
 
 struct sigaction {
-	void (*sa_handler)(int);    // 시그널을 처리하기 위한 핸들러. SIG_DFL, SIG_IGN 또는 핸들러 함수
-	void (*sa_sigaction)(int, siginfo_t *, void *); // 밑의 sa_flags가 SA_SIGINFO일때 
-	                                                // sa_handler 대신에 동작하는 핸들러
-	sigset_t sa_mask;             // 시그널을 처리하는 동안 블록화할 시그널 집합의 마스크
-	int sa_flags;                // 아래 설명을 참고하세요.
-	void (*sa_restorer)(void);  // 사용해서는 안됩니다.
+  void (*sa_handler)(int);
+  // 시그널을 처리하기 위한 핸들러. SIG_DFL, SIG_IGN 또는 핸들러 함수
+  void (*sa_sigaction)(int, siginfo_t *, void *);
+  // 밑의 sa_flags가 SA_SIGINFO일때 sa_handler 대신에 동작하는 핸들러
+  sigset_t sa_mask;
+  // 시그널을 처리하는 동안 블록화할 시그널 집합의 마스크
+  int sa_flags;
+  // 아래 설명을 참고하세요.
+  void (*sa_restorer)(void);
+  // 사용해서는 안됩니다.
 }
 ```
 
@@ -145,3 +149,63 @@ ntohl : (Network to host long)
 
 주소를 지정해 주는것으로 `inet_addr("내 시스템의 IP")`로도 지정할 수 있지만 프로그램이 실행되는 시스템마다
 IP가 다르므로 고정 IP로 하지않고 `htonl(INADDR_ANY)`로 사용합니다.
+
+### bind
+
+소켓에 IP주소와 포트번호를 지정해 줍니다. 이로서 소켓을 통신에 사용할 수 있도록 준비가 됩니다.
+http://forum.falinux.com/zbxe/index.php?document_srl=430926&mid=C_LIB
+
+### SYNIPSIS
+
+```
+#include <sys/types.h>
+#include <sys/socket.h> 
+int bind(int sockfd, struct sockaddr *myaddr, socklen_t addrlen); 
+int sockfd : 소켓 디스크립터 (socket() 로 연결된 sock 을 뜻함)
+struct sockaddr *myaddr : 주소 정보로 인터넷을 이용하는 AF_INET인지 시스템 내에서 통신하는 AF_UNIX에 따라서 달라집니다.
+
+AF_INET
+
+struct sockaddr_in {
+    short            sin_family;   // e.g. AF_INET
+    unsigned short   sin_port;     // e.g. htons(3490)
+    struct in_addr   sin_addr;     // see struct in_addr, below
+    char             sin_zero[8];  // zero this if you want to
+};
+
+AF_UNIX
+
+struct sockaddr { 
+   unsigned short sa_family; 
+   char sa_data[14]; 
+};
+
+인터넷을 통해 통신하는 AF_INET인 경우에는 struct sockaddr_in을 사용합니다. 
+socklen_t addrlen 	: myadd 구조체의 크기 (sizeof(echoServAddr))
+```
+
+### recvfrom()
+UDP/IP 통신에서 소켓으로부터 데이터를 수신합니다.
+http://forum.falinux.com/zbxe/index.php?document_srl=441147&mid=C_LIB
+
+### SYNOPSIS
+
+```
+#include <sys/types.h>
+#include <sys/socket.h>
+int recvfrom(int s, void *buf, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen); 
+
+int s      : 소켓 디스크립터
+void *buf  : 자료 수신을 위한 버퍼 포인터
+size_t len : 버퍼의 바이트 단위 길이
+int flags  : 수신을 위한 옵션으로 아래의 값을 사용할 수 있습니다.
+flags 	옵션 설명
+  MSG_OOB       : SOCK_STREAM에만 사용되며 out-of-band 데이터로 전송될 수 있음을 나타냅니다.
+  MSG_DONTROUTE : 데이터는 라우팅될 수 없음으로 지정합니다.
+  MSG_DONTWAIT  : NONE BLOCKING 통신이 가능하도록 합니다.
+  MSG_NOSIGNAL  : 상대방과 연결이 끊겼을 때, SIGPIPE 시그널을 받지 않도록 합니다.
+sockaddr *to    : 전송한 곳의 주소 정보
+socklen_t tolen : 주조 정보의 크기
+
+반환 : -1 이외 실제 수신한 바이트수
+```

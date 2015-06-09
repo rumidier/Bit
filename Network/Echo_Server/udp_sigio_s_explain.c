@@ -54,6 +54,8 @@ main (int argc,
   if (bind(sock, (struct sockaddr *) &echoServAddr, sizeof(echoServAddr)) < 0)
     DieWithError("bind() faild");
   handler.sa_handler = SIGIOHandler;
+  //뭐야 이거?
+  //(what the..?)
 
   if (sigfillset(&handler.sa_mask) < 0)
     DieWithError("sigfillset() failed");
@@ -71,6 +73,8 @@ main (int argc,
 
   for (;;)
     UseldleTime();
+
+  //socket 열고만 있고 받기만 하면서 일부러 대기만 타네
 
   return 0;
 }
