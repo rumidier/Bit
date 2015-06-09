@@ -10,6 +10,10 @@ linux-4.0.4/arch/x86 에 있는 내용을 tags에 정리한다
 
 ### .vimrc 설정
 
+
+/usr/src/linux-4....
+$ ctags -R
+
 ```
 set tags += /usr/include/tags
 set tags += /usr/src/linux-4.0.4/tags
@@ -21,6 +25,8 @@ test.txt 저장후 다음 절차 진행
 원하는 함수를 찾아서 다음 진행
 
 > task_struct
+or
+: tj task_struct
 
 'ctrl + ]' tags 파일에 task_struct 찾아감
 
