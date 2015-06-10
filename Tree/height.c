@@ -8,10 +8,13 @@ typedef struct _node
   struct _node *right;
 } NODE;
 
-NODE *root;
+NODE *root = 0;
+
+NODE * balance_tree(NODE **node);
 
 typedef enum {LEFT, RIGHT} TYPE;
 
+/*
 void insert_data (int data)
 {
   NODE *temp, **p = &root;
@@ -30,6 +33,37 @@ void insert_data (int data)
         return;
     }
   *p = temp;
+}
+*/
+
+NODE *insert (NODE** root, int data)
+{
+	NODE **p = root;
+	if (*p == NULL)
+	{
+		*p = (NODE *)malloc(sizeof(NODE));
+		if (*p == NULL)
+		{
+			printf("메모리 할당 실패 \n");
+			exit(-1);
+		}
+		(*p)->data = data;
+		(*p)->left = (*p)->right = NULL;
+	} else if (data < (*p)->data)
+	{
+		(*p)->left = insert(&((*p)->left), data);
+		(*p) = balance_tree(p);
+	} else if (data > (*p)->data)
+	{
+		(*p)->right = insert(&((*p)->right),data);
+		(*p) = balance_tree(p);
+	}
+	else {
+		printf("중복데이터 입력\n");
+		exit(-1);
+	}
+
+	return *p;
 }
 
 void _display ( NODE *temp, int (*a)[10], int *row, int *col )
@@ -87,11 +121,9 @@ NODE *search (NODE *node, int key)
 {
   if (node == NULL) return NULL;
   printf("%d->", node->data);
-  printf("node [%d]\n", node);
 
   if (key == node->data)
     {
-      printf("return node [%d]\n", node);
       return node;
     }
   else if (key < node->data)
@@ -145,44 +177,60 @@ int get_balance (NODE *node)
   return get_height(node->left) - get_height(node->right);
 }
 
+NODE *balance_tree (NODE **node)
+{
+	int height_diff;
+	height_diff = get_balance(*node);
+	printf("밸런스값 %d\n", height_diff);
+
+	if (height_diff > 1)
+	{
+		if (get_balance((*node)->left) > 0) {
+			*node = rotate_LL(*node);
+		}else {
+			*node = rotate_LR(*node);
+		}
+	}
+
+	else if (height_diff < -1)
+	{
+		if (get_balance((*node)->right) < 0)
+		{
+			*node = rotate_RR(*node);
+		}
+		else {
+			*node = rotate_LL(*node);
+		}
+	}
+
+	return *node;
+}
+
+NODE *search_parent (NODE *node, int key)
+{
+	if (node->left->data == key)
+		return node;
+
+	if (node->right->data == key)
+		return node;
+	if (key < node->data)
+		search_parent(node->left, key);
+	else
+		search_parent(node->right, key);
+}
+
 
 int
 main (int argc,
       char *argv[])
 {
-  int rl[8] = {6,3,1,7,5,12,9,4};
-  NODE *node = 0;
-
+  int a[] = {6,3,1,7,5,12,4,2};
   int i;
-  int height;
-  int in;
-
   print(root);
   for (i = 0; i < 8; i++)
-    {
-      insert_data(rl[i]);
-      print(root);
-    }
-  insert_data(14);
-  print(root);
-
-  while (1) {
-    printf("input the node data(exit: -1): ");
-    fflush(stdin);
-    scanf("%d", &in);
-
-
-    if (in == -1) break;
-    printf("in : %d\n", in);
-    printf("root: %d\n", root);
-    NODE *babo;
-    babo = search(root, in);
-    printf("babo[%d]\n", babo);
-//    height = get_height(node);
-    height = get_balance(node);
-//    printf("%d 높이는 %d\n", in, height);
-    printf("%d 밸런스값: %d\n", in, height);
-    getchar();
+  {
+	  insert(&root, a[i]);
+	  print(root);
   }
 
   return 0;
