@@ -17,6 +17,12 @@ void SIGIOHandler(int signalType);
 
 int sock;
 
+void DieWithError (char *errorMessage)
+{
+  perror(errorMessage);
+  exit(0);
+}
+
 int
 main (int argc,
       char *argv[])
@@ -32,30 +38,18 @@ main (int argc,
       exit(0);
     }
   echoServPort = atoi(argv[1]);
-  //10진 정수 문자열을 정수로 변환합니다.
 
   if ((sock=socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
     DieWithError("socket() failed");
 
-  //IPv4의 인터넷 프로토콜 UDP socket 을 엽니다.
-
   memset (&echoServAddr, 0, sizeof(echoServAddr));
-  // sockaddr_in 정보를 리셋합니다.
-
   echoServAddr.sin_family = AF_INET;
-  //주소체계에 저장하는 AF_INET
   echoServAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  //주소를 지정해 주는것으로 `inet_addr("내 시스템의 IP")`로도 지정할 수 있지만 프로그램이 실행되는 시스템마다
-  //IP가 다르므로 고정 IP로 하지않고 `htonl(INADDR_ANY)`로 사용합니다.
   echoServAddr.sin_port=htons(echoServPort);
-  //host 시스템에서 network로 short형 데이터를 보낼 때 바이트 오더를 바꾸어 주는 함수
-  //sockaddr_in 에 서버 정보를 저장합니다.
 
   if (bind(sock, (struct sockaddr *) &echoServAddr, sizeof(echoServAddr)) < 0)
     DieWithError("bind() faild");
   handler.sa_handler = SIGIOHandler;
-  //뭐야 이거?
-  //(what the..?)
 
   if (sigfillset(&handler.sa_mask) < 0)
     DieWithError("sigfillset() failed");
@@ -73,8 +67,6 @@ main (int argc,
 
   for (;;)
     UseldleTime();
-
-  //socket 열고만 있고 받기만 하면서 일부러 대기만 타네
 
   return 0;
 }
@@ -111,10 +103,4 @@ void SIGIOHandler (int signalType)
         }
     }
   while (recvMsgSize >= 0);
-}
-
-void DieWithError (char *errorMessage)
-{
-  perror(errorMessage);
-  exit(0);
 }
