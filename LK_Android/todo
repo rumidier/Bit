@@ -1,0 +1,12 @@
+ gcc -E a.c -o a.i
+ gcc -S a.i -o a.s
+ gcc -c a.s -o a.o
+ readelf -h a.o
+ readelf -h a.out
+ readelf -h a.c
+ objdump -S a.o
+
+ gcc -static a.o -o bbb
+ gcc -dynamic-linker a.o -o aaa
+
+ readelf -S a.c
