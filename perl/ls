@@ -132,6 +132,7 @@ sub ls_dir {
     my $blk_size = 0;
     for my $file ( @files ) {
         my $st = lstat( catfile($dir, $file) );
+		printf("----------".$st->size."----------\n");
         $blk_size += (int($st->size / 4096) + ($st->size % 4096 ? 1 : 0)) * (4096 / 1024) ;
     }
     say encode_utf8("합계 $blk_size") if $long;
