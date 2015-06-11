@@ -17,7 +17,13 @@ typedef struct
 {
 	int sid;
 	struct rb_node tree;
-}SAWON;
+} SAWON;
+
+typedef struct
+{
+	int sid;
+	int color;
+} INFO;
 
 #define offsetof(TYPE, MEMBER)	((size_t) & ((TYPE*)0)->MEMBER)
 
@@ -173,32 +179,39 @@ SAWON* insert_data(struct rb_root *root, int sid, struct rb_node *node)
 	rb_insert_color(node, root);
 	return NULL;
 }
-void _display(struct rb_node *temp, int (*a)[10], int *row, int *col)
+void _display(struct rb_node *temp, INFO (*a)[10], int *row, int *col)
 {
 	if(temp == 0)
 		return;
 	(*row)++;
 	_display(temp->rb_left, a, row,col);
-	a[*row][(*col)++] = rb_entry(temp, SAWON,tree)->sid;
+	a[*row][(*col)].color = rb_color(temp);
+	a[*row][(*col)++].sid = rb_entry(temp, SAWON,tree)->sid;
 	_display(temp->rb_right, a, row, col);
 	(*row)--;
 }
 void display(struct rb_root * root)
 {
 	int i, j;
-	int a[10][10] = {{0,},};
+	INFO a[10][10] = {{0,},};
 	int row = -1;
 	int col = 0;
 	system("clear");
 	_display(root->rb_node, a, &row, &col);
+
 	for(i=0;i<10;i++)
 	{
 		for(j=0;j<10;j++)
 		{
-			if(a[i][j] == 0)
+			if(a[i][j].sid == 0)
 				printf("%4c", ' ');
 			else
-				printf("%4d", a[i][j]);
+			{
+				if(a[i][j].color == 1)
+					printf("[%4d]", a[i][j].sid);
+				else
+					printf("<%4d>", a[i][j].sid);
+			}
 		}
 		printf("\n\n");
 	}
@@ -209,7 +222,6 @@ int main()
 {
 	struct rb_root root = {0,};
 	SAWON s[8];
-//	int a[4] = {1,3,7};
 	int a[8] = {1,2,3,4,5,6,7,8};
 	int i;
 
@@ -221,8 +233,6 @@ int main()
 
 		display(&root);
 	}
-//	__rb_rotate_left(root.rb_node, &root);
-//	__rb_rotate_right(root.rb_node, &root);
 	
 	display(&root);
 	return 0;
