@@ -10,3 +10,42 @@
  gcc -dynamic-linker a.o -o aaa
 
  readelf -S a.c
+
+ tj prio_to_weight
+ CFS (complete fair schedule)
+
+cfs-run-queue
+
+for_each_class 
+  pick_next_task
+    fair_sched_class.pick_next_task(rq)
+	  ----
+	      pick_next_task
+
+		  do {
+			  se = pick_next_entity(cfs_rq);
+		  } while (cfs_rq)
+
+            se는 __pick_first_entity
+			rb_node_node *left = crs_rq->rb_leftmost;
+
+      어쩌고 저쩌고
+	  return se;
+	  그게 저렇게 되고 저게 이렇게 된다가 뭔말이야..
+
+make
+ls
+vi Makefile
+make
+ls
+insmod process.ko
+dmesg
+make
+ls
+insmod process.ko
+dmesg
+insmod process.ko
+lsmod
+rmmod process
+dmesg
+insmod process.ko
