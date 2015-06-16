@@ -1,13 +1,14 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
 int
 main (int argc,
-      char **argv[])
+      char *argv[])
 {
   int sck_inet;
   struct sockaddr_in addr_inet, get_addr;
@@ -19,6 +20,7 @@ main (int argc,
   addr_inet.sin_family = AF_INET;
   addr_inet.sin_port = htons(9000);
   inet_aton(argv[1], &addr_inet.sin_addr);
+  printf("[%d]\n", addr_inet.sin_addr);
   len_inet = sizeof(addr_inet);
 
   if (bind(sck_inet, (struct sockaddr *)&addr_inet, len_inet) < 0) {
@@ -26,7 +28,7 @@ main (int argc,
     exit(1);
   }
 
-  if (getsockname(sck_inet, (struct sockaddr *) &get_addr, &len_inet) < 0) {
+  if (getsockname(sck_inet, (struct sockaddr *) &get_addr, (socklen_t *)&len_inet) < 0) {
     printf("getsockname error\n");
     exit(1);
   }

@@ -1,0 +1,1 @@
+cmd_/root/Bit/LK_Android/buddy/getfree_2.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /root/Bit/LK_Android/buddy/getfree_2.ko /root/Bit/LK_Android/buddy/getfree_2.o /root/Bit/LK_Android/buddy/getfree_2.mod.o

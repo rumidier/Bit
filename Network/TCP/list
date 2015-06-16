@@ -1,0 +1,14 @@
+accept - 100p
+bind - 108(102)
+getsockname() - 109p
+  - [getsockname](http://stackoverflow.com/questions/5759031/getsockname-always-returning-0-0-0-0)
+getpeername
+  - [getpeername](http://madprog.tistory.com/32)
+
+backlog - 연결대기 큐의 크기
+외부로부터의 연결은 이 큐에서 accept()가 호출될때까지 기다린다
+
+listen(sck_inet,5);
+  sck_inet = int s (소켓 디스크립터)
+  backlog = (대기 메시지 큐의 개수)
+

@@ -1,0 +1,20 @@
+__get_free_pages
+  >> unsigned long __get_free_pages(gfp_t gfp_mask, unsigned int order)
+
+allc_pages
+	static inline struct page *
+	alloc_pages(gfp_t gfp_mask, unsigned int order)
+
+#define GFP_KERNEL  (__GFP_WAIT | __GFP_IO | __GFP_FS)
+
+
+
+static struct page *
+get_page_from_freelist(gfp_t gfp_mask, nodemask_t *nodemask, unsigned int order,
+        struct zonelist *zonelist, int high_zoneidx, int alloc_flags,
+        struct zone *preferred_zone, int migratetype)
+{
+
+/rmqueue_bulk
+	__rmqueue (한번 둘러나 봅시다)
+	  __rmqueue_smallest (가장 찾은 놈을 찾지요?)
