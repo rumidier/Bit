@@ -1,4 +1,5 @@
-obj-m := process.o
+#obj-m := process.o
+obj-m := mydev.o
 
 KDIR := /lib/modules/$(shell uname -r)/build
 
