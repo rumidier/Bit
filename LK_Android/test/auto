@@ -1,0 +1,2 @@
+gcc tt.c
+./a.out
