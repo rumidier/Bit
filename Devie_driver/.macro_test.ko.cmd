@@ -1,0 +1,1 @@
+cmd_/root/Bit/Devie_driver/macro_test.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /root/Bit/Devie_driver/macro_test.ko /root/Bit/Devie_driver/macro_test.o /root/Bit/Devie_driver/macro_test.mod.o

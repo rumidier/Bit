@@ -1,0 +1,8 @@
+make
+rmmod nosymbol
+rmmod symbol2
+rmmod symbol1
+insmod nosymbol.ko
+insmod symbol1.ko
+insmod symbol2.ko
+cat /proc/kallsyms | grep 'nosymbol_test'

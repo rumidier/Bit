@@ -1,0 +1,1 @@
+insmod macro_test.ko mystring="mkernel" myshort=255

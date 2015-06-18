@@ -1,0 +1,1 @@
+cmd_/root/Bit/Devie_driver/symbol1.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /root/Bit/Devie_driver/symbol1.ko /root/Bit/Devie_driver/symbol1.o /root/Bit/Devie_driver/symbol1.mod.o
