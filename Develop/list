@@ -1,0 +1,148 @@
+/root 디렉터리에서 Development 디렉터리를 마련한다
+
+Development 디렉터리는 
+
+Smart4412Linux 디렉터리를 생성하고 Development 디렉터리를 위치 시킨다
+
+/# gcc --version
+apt-get install gcc-4.8 g++-4.8 g++-4.8-multilib gcc-4.8-multilib
+echo "export CC=gcc-4.8 CXX=g++-4.8" >> ~/.bashrc
+tail -5 ~/.bashrc
+source ~/.bashrc
+echo $CC
+/Smart4412Linux/Development/Toolchain/
+cp arm-2010q1.tbz /usr/local/
+
+cd Toolchain
+/# cp arm-2010q1.tgz /usr/local/
+# cd /usr/local/
+# tar xvzf arm-2010q1.tgz
+# cd CodeSourcery/Sourcery_G++_Lite/bin
+# ls
+# cd ~/Smart4412Linux/Development/Toolchain
+# cp gnueabi.tgz /opt
+# cd /opt
+# tar xvzf gnueabi.tgz
+# cd gnuebi
+# ls
+etc opt usr
+# cd Source/kernel/
+# tar xvzf kernel_4412_linux.tgz
+# cd kernerl_4412
+# make tags ARCH=arm
+(ctags -R tags 는 전체적인 코드를 만들고 make tags 는 선택적으로 만든다)
+# cd kernel_4412/scripts
+# ls tags.sh
+# ls kernel_4412/arch/arm/configs
+# cd kernel_4412
+# make hybus_smdk4412_defconfig
+# make menuconfig
+# make -j4
+  > /Smart4412Linux/Development/Source/kernel/kernel_4412/drivers/Exynos4412TKU_IEB/Exynos4412TKU_IEB
+
+#/Smart4412Linux/Development/Source/kernel/
+# cp kernel_4412/drivers/Exynos4412TKU_IEB/ieb_fnd.c test/
+# cd test
+# vi Makefile
+
+```
+C     := /usr/local/CodeSourcery/Sourcery_G++_Lite/bin/arm-none-eabi-gcc
+obj-m := ieb_fnd.o
+KDIR  := /Smart4412Linux/Development/Source/kernel/kernel_4412
+
+all:
+make -C $(KDIR) SUBDIRS=$(PWD)
+
+clean:
+rm -rf *.o*.ko
+rm -rf *.mod.*
+```
+
+cd /test
+adb devices
+apt-get install android-tools-adb 
+
+보드 연결후
+# adb push ieb_fnd.ko /data
+  > 70KB/s (75430 bytes in 0.200s)
+
+# adb shell
+android:/ #
+# cd /data/
+# rm ieb_fnd.ko
+# ls
+# insmod ieb_fnd.ko
+
+ieb_fnd.ko "MODULE_LICENSE("GPL")" 추가후 컴파일해도 실패
+
+android # cat /proc/devices
+
+google 검색
+ > android ndk
+
+ ndk 
+
+ Development/Source/
+ wget http:~~~~
+
+ $ chmod 755 android~down file
+ $ ./down_fiile
+
+
+# cd Smart4412Linux/Development/Source/kernel/APP
+# vi fnd_test.c                                                                                                                                                                                                                                                               
+# cd Smart4412Linux/Development/Source/kernel/APP                                                                                                                                                                                                                             
+# cp fnd_test.c /~~~/Source/kernel/test/
+# gcc -o fnd_test fnd_test.c
+# ./fnd_test
+Can't Open Device
+Can't Open Device
+Can't Open Device
+Can't Open Device
+.... (엄한짓 하고 있음)
+# adb devices
+# adb push fnd_test /data
+# cd /data
+# ./fnd_test
+/system/bin/sh: ./fnd_test: not executable : magic 7F45
+
+file fnd_test
+(gcc 로 컴파일 했기 때문에 arm에서 실행이 되지 않음)
+
+뭐 만드는거 (헤더 보이게 컴파일 할때)
+>gcc -E a.c a.i
+>gcc -c a.i a.s
+>gcc -o a.s a.o
+>gcc a.o -o aa
+
+# cd Source android-ndk-r10e/
+# cd sample
+# cd hello-jni
+# cd jni
+# cd Source/kernel/test
+test #  mkdir jni
+# cd jni
+# cp ~~/~~~/hellojni
+# cp fnd_test.c jni/
+# ls
+Android.mk fnd_test.c
+
+Android.mk 수정
+
+# vi Android.mk
+
+> LOCAL_MODULE := fnd_test
+> LOCAL_SRC_FILESa := fnd_test.c
+> 
+> include $(BUILD_EXECUTABLE)
+
+# ndk-build
+# ls ../libs/armeabi/fnd_test 생성됨
+
+/Users/Hancho/homebrew/opt/android-sdk
+You will have to install the platform-tools and docs EVERY time this formula
+updates. If you want to try and fix this then see the comment in this formula.
+
+You may need to add the following to your .bashrc:
+  export ANDROID_HOME=/Users/Hancho/homebrew/opt/android-sdk
+
