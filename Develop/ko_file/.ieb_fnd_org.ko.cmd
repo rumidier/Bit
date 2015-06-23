@@ -1,0 +1,1 @@
+cmd_/root/Bit/Develop/ko_file/ieb_fnd_org.ko := /usr/local/CodeSourcery/Sourcery_G++_Lite/bin/arm-none-eabi-ld -EL -r  -T /Smart4412Linux/Development/Source/kernel/kernel_4412/scripts/module-common.lds --build-id  -o /root/Bit/Develop/ko_file/ieb_fnd_org.ko /root/Bit/Develop/ko_file/ieb_fnd_org.o /root/Bit/Develop/ko_file/ieb_fnd_org.mod.o
