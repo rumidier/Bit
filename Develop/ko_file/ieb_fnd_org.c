@@ -213,12 +213,33 @@ void remove_timer(void)
 	del_timer(&timer_str);
 }
 
+void sec_1(void)
+{
+  static int num = 0;
+  write_addr_l(FND);
+  FND_SEL(~0x08);
+  FND_DATA(FND_DATA_TBL[num%10]);
+  num++;
+}
+
 void timer_function(unsigned long ptr)
 {
-  write_addr_l(FND);
-  FND_SEL(0x08);
-  FND_DATA(FND_DATA_TBL[n%10]);
-  mod_timer(&timer_str, jiffies+HZ);
+//	++n;
+//	if( n > (MAX_FND))
+//		n = 1;
+//
+//	switch(n)
+//	{
+//		case  1:    fnd_disp(1, disp[0]);  break;
+//		case  2:    fnd_disp(2, disp[1]);  break;
+//		case  3:    fnd_disp(3, disp[2]);  break;
+//		case  4:    fnd_disp(4, disp[3]);  break;
+//		default :   break;
+//	}
+//
+//	init_add_timer();
+	sec_1 ();
+        mod_timer(&timer_str, jiffies+HZ);
 }
 
 static int fnd_ioctl(struct inode *inode, struct file *file, unsigned int  cmd, unsigned long arg)
