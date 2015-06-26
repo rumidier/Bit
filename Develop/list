@@ -26,9 +26,10 @@ cd Toolchain
 # cd gnuebi
 # ls
 etc opt usr
-# cd Source/kernel/
+# cd Smart4412Linux/Development/Source/kernel/
 # tar xvzf kernel_4412_linux.tgz
 # cd kernerl_4412
+# apt-get install exuberant-ctags
 # make tags ARCH=arm
 (ctags -R tags 는 전체적인 코드를 만들고 make tags 는 선택적으로 만든다)
 # cd kernel_4412/scripts
@@ -54,7 +55,7 @@ all:
 make -C $(KDIR) SUBDIRS=$(PWD)
 
 clean:
-rm -rf *.o*.ko
+rm -rf *.o *.ko
 rm -rf *.mod.*
 ```
 

@@ -1,0 +1,18 @@
+모듈 insmod를 위한 절차
+ieb_fnd.c
+
+ieb_fnd device 모듈 업데이트를 위한 함수
+static void gpio_init(void)
+static void write_addr_l(unsigned char val){
+void FND_DATA(unsigned char val)
+void FND_SEL(unsigned char val)
+void fnd_disp(int num, unsigned char val)
+static void fnd_clear(void)
+void init_add_timer(void)
+void remove_timer(void)
+void timer_function(unsigned long ptr)
+static int fnd_ioctl(struct inode *inode, struct file *file, unsigned int  cmd, unsig    ned long arg)
+static int fnd_open(struct inode *minode, struct file *mfile)
+static int fnd_release(struct inode *minode, struct file *mfile)
+static ssize_t fnd_write (struct file *file, const char *buf, size_t count, loff_t *f    _pos)
+
