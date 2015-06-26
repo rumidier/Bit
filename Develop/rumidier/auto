@@ -1,0 +1,11 @@
+cd jni/
+ndk-build
+cd ../
+cd libs/armeabi/
+adb push led_test /data
+
+cd ../../
+cd module
+make
+adb push ieb_led.ko /data
+cd ../

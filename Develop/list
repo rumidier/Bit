@@ -35,6 +35,8 @@ etc opt usr
 # cd kernel_4412/scripts
 # ls tags.sh
 # ls kernel_4412/arch/arm/configs
+	jkj/ asdfjkj
+
 # cd kernel_4412
 # make hybus_smdk4412_defconfig
 # make menuconfig
@@ -55,6 +57,7 @@ all:
 make -C $(KDIR) SUBDIRS=$(PWD)
 
 clean:
+
 rm -rf *.o *.ko
 rm -rf *.mod.*
 ```

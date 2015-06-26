@@ -1,0 +1,1 @@
+cmd_/Smart4412Linux/ioctl/ioctl.ko := /usr/local/CodeSourcery/Sourcery_G++_Lite/bin/arm-none-eabi-ld -EL -r  -T /Smart4412Linux/Development/Source/kernel/kernel_4412/scripts/module-common.lds --build-id  -o /Smart4412Linux/ioctl/ioctl.ko /Smart4412Linux/ioctl/ioctl.o /Smart4412Linux/ioctl/ioctl.mod.o

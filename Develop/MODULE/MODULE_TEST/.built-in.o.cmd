@@ -1,0 +1,1 @@
+cmd_/Smart4412Linux/Development/Source/kernel/test/built-in.o :=  rm -f /Smart4412Linux/Development/Source/kernel/test/built-in.o; /usr/local/CodeSourcery/Sourcery_G++_Lite/bin/arm-none-eabi-ar rcsD /Smart4412Linux/Development/Source/kernel/test/built-in.o
